@@ -1,0 +1,32 @@
+{
+  "name": "reactrefreshplurals",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "ania",
+  "license": "ISC",
+  "dependencies": {
+    "bootstrap": "^4.2.1",
+    "browserify": "^16.2.3",
+    "eslint": "^5.12.0",
+    "eslint-plugin-react": "^7.12.3",
+    "flux": "^2.0.3",
+    "gulp": "^4.0.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-connect": "^5.7.0",
+    "gulp-eslint": "^0.15.0",
+    "gulp-open": "^3.0.1",
+    "jquery": "^2.1.4",
+    "loadash": "^1.0.0",
+    "react": "^0.13.3",
+    "react-router": "^0.13.3",
+    "reactify": "^1.1.1",
+    "vinyl-source-stream": "^2.0.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.1"
+  }
+}
