@@ -46229,74 +46229,74 @@ module.exports = require('./lib/React');
 "use strict";
 
 //This file is mocking a web API by hitting hard coded data.
-var authors = require('./authorData').authors;
-var _ = require('lodash');
+var authors = require("./authorData").authors;
+var _ = require("lodash");
 
 //This would be performed on the server in a real app. Just stubbing in.
 var _generateId = function(author) {
-	return author.firstName.toLowerCase() + '-' + author.lastName.toLowerCase();
+    return author.firstName.toLowerCase() + "-" + author.lastName.toLowerCase();
 };
 
 var _clone = function(item) {
-	return JSON.parse(JSON.stringify(item)); //return cloned copy so that the item is passed by value instead of by reference
+    return JSON.parse(JSON.stringify(item)); //return cloned copy so that the item is passed by value instead of by reference
 };
 
 var AuthorApi = {
-	getAllAuthors: function() {
-		return _clone(authors); 
-	},
+    getAllAuthors: function() {
+        return _clone(authors); 
+    },
 
-	getAuthorById: function(id) {
-		var author = _.find(authors, {id: id});
-		return _clone(author);
-	},
+    getAuthorById: function(id) {
+        var author = _.find(authors, {id: id});
+        return _clone(author);
+    },
 	
-	saveAuthor: function(author) {
-		//pretend an ajax call to web api is made here
-		console.log('Pretend this just saved the author to the DB via AJAX call...');
+    saveAuthor: function(author) {
+        //pretend an ajax call to web api is made here
+        console.log("Pretend this just saved the author to the DB via AJAX call...");
 		
-		if (author.id) {
-			var existingAuthorIndex = _.indexOf(authors, _.find(authors, {id: author.id})); 
-			authors.splice(existingAuthorIndex, 1, author);
-		} else {
-			//Just simulating creation here.
-			//The server would generate ids for new authors in a real app.
-			//Cloning so copy returned is passed by value rather than by reference.
-			author.id = _generateId(author);
-			authors.push(_clone(author));
-		}
+        if (author.id) {
+            var existingAuthorIndex = _.indexOf(authors, _.find(authors, {id: author.id})); 
+            authors.splice(existingAuthorIndex, 1, author);
+        } else {
+            //Just simulating creation here.
+            //The server would generate ids for new authors in a real app.
+            //Cloning so copy returned is passed by value rather than by reference.
+            author.id = _generateId(author);
+            authors.push(_clone(author));
+        }
 
-		return author;
-	},
+        return author;
+    },
 
-	deleteAuthor: function(id) {
-		console.log('Pretend this just deleted the author from the DB via an AJAX call...');
-		_.remove(authors, { id: id});
-	}
+    deleteAuthor: function(id) {
+        console.log("Pretend this just deleted the author from the DB via an AJAX call...");
+        _.remove(authors, { id: id});
+    }
 };
 
 module.exports = AuthorApi;
 
 },{"./authorData":160,"lodash":2}],160:[function(require,module,exports){
 module.exports = {
-	authors:
-	[
-		{
-			id: 'cory-house',
-			firstName: 'Cory',
-			lastName: 'House'
-		},
-		{
-			id: 'scott-allen',
-			firstName: 'Scott',
-			lastName: 'Allen'
-		},
-		{
-			id: 'dan-wahlin',
-			firstName: 'Dan',
-			lastName: 'Wahlin'
-		}
-	]
+    authors:
+[
+    {
+        id: "cory-house",
+        firstName: "Cory",
+        lastName: "House"
+    },
+    {
+        id: "scott-allen",
+        firstName: "Scott",
+        lastName: "Allen"
+    },
+    {
+        id: "dan-wahlin",
+        firstName: "Dan",
+        lastName: "Wahlin"
+    }
+]
 };
 
 },{}],161:[function(require,module,exports){
@@ -46332,27 +46332,19 @@ module.exports = About;
 "use strict";
 
 var React = require("react");
-var AuthorApi = require("../../api/authorApi");
 
-var Authors = React.createClass({displayName: "Authors",
+var AuthorList = React.createClass({displayName: "AuthorList",
 
-    getInitialState: function(){
-        return {
-            authors: []
-        };
-    },
-
-    componentWillMount: function() {
-
-        //use setter here
-        this.setState({ authors: AuthorApi.getAllAutors()});
-
+    //define expectations for props passed and add console logged errors - dev only
+    propTypes: {
+        authors: React.PropTypes.array.isRequired
     },
 
     render: function(){
+        console.log("AuthorList - render");
 
         //create a function to iterate through authors passed in props
-        var createAuthorRow = function(author){
+        var createAuthorRow = function(author) {
             return (
                 //use key for each elem, common pattern is primary key from db
                 React.createElement("tr", {key: author.id}, 
@@ -46365,15 +46357,13 @@ var Authors = React.createClass({displayName: "Authors",
 
         return (
             React.createElement("div", null, 
-                React.createElement("h1", null, "Authors"), 
-
                 React.createElement("table", {className: "table"}, 
                 React.createElement("thead", null, 
                     React.createElement("th", null, "ID"), 
                     React.createElement("th", null, "Name")
                 ), 
                 React.createElement("tbody", null, 
-                    this.state.authors.map(createAuthorRow, this)
+                    this.props.authors.map(createAuthorRow, this)
                 )
                 )
             )
@@ -46381,9 +46371,47 @@ var Authors = React.createClass({displayName: "Authors",
     }
 });
 
-module.exports = Authors;
+module.exports = AuthorList;
 
-},{"../../api/authorApi":159,"react":158}],163:[function(require,module,exports){
+},{"react":158}],163:[function(require,module,exports){
+"use strict";
+
+var React = require("react");
+var AuthorApi = require("../../api/authorApi");
+var AuthorList = require("./authorList.jsx");
+
+var AuthorPage = React.createClass({displayName: "AuthorPage",
+
+    //initial state - empty array with authors - no authors yet
+    getInitialState: function(){
+        return {
+            authors: []
+        };
+    },
+
+    //use setter here to set state after mount - use callback or promise if calling real api
+    componentDidMount: function() {
+
+        if(this.isMounted()){
+            this.setState({ authors: AuthorApi.getAllAuthors() });
+        }
+    },
+
+    render: function(){
+
+        return (
+            React.createElement("div", null, 
+                React.createElement("h1", null, "Authors"), 
+                React.createElement(AuthorList, {authors: this.state.authors})
+                
+            )
+        );
+    }
+});
+
+module.exports = AuthorPage;
+
+},{"../../api/authorApi":159,"./authorList.jsx":162,"react":158}],164:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -46413,7 +46441,7 @@ var Header = React.createClass({displayName: "Header",
 
 module.exports = Header;
 
-},{"react":158}],164:[function(require,module,exports){
+},{"react":158}],165:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -46431,7 +46459,7 @@ render: function(){
 
 module.exports = Home;
 
-},{"react":158}],165:[function(require,module,exports){
+},{"react":158}],166:[function(require,module,exports){
 $ = jQuery = require('jquery');
 var React = require('react');
 var Home = require('./components/homePage');
@@ -46442,7 +46470,6 @@ var Header = require('./components/common/header');
 //iife to wrap everything below so above are global variables but below is eval in strict mode:
 (function(win) {
     "use strict";
-
     //way to route without Router:
     var App = React.createClass({displayName: "App",
         render: function(){
@@ -46480,4 +46507,4 @@ var Header = require('./components/common/header');
 
 })(window);
 
-},{"./components/about/aboutPage":161,"./components/authors/authorPage.jsx":162,"./components/common/header":163,"./components/homePage":164,"jquery":1,"react":158}]},{},[165]);
+},{"./components/about/aboutPage":161,"./components/authors/authorPage.jsx":163,"./components/common/header":164,"./components/homePage":165,"jquery":1,"react":158}]},{},[166]);

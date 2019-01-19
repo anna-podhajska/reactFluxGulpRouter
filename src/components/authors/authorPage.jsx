@@ -2,52 +2,35 @@
 
 var React = require("react");
 var AuthorApi = require("../../api/authorApi");
+var AuthorList = require("./authorList.jsx");
 
-var Authors = React.createClass({
+var AuthorPage = React.createClass({
 
+    //initial state - empty array with authors - no authors yet
     getInitialState: function(){
         return {
             authors: []
         };
     },
 
-    componentWillMount: function() {
+    //use setter here to set state after mount - use callback or promise if calling real api
+    componentDidMount: function() {
 
-        //use setter here
-        this.setState({ authors: AuthorApi.getAllAutors()});
-
+        if(this.isMounted()){
+            this.setState({ authors: AuthorApi.getAllAuthors() });
+        }
     },
 
     render: function(){
 
-        //create a function to iterate through authors passed in props
-        var createAuthorRow = function(author){
-            return (
-                //use key for each elem, common pattern is primary key from db
-                <tr key={author.id}>
-                    <td><a href={"/#authors/" + author.id}>{author.id}</a></td>
-                    <td>{author.firstName} {author.lastName}</td>
-                </tr>
-
-            );
-        };
-
         return (
             <div>
                 <h1>Authors</h1>
-
-                <table className="table">
-                <thead>
-                    <th>ID</th>
-                    <th>Name</th>
-                </thead>
-                <tbody>
-                    {this.state.authors.map(createAuthorRow, this)}
-                </tbody>
-                </table>
+                <AuthorList authors={this.state.authors} />
+                
             </div>
         );
     }
 });
 
-module.exports = Authors;
+module.exports = AuthorPage;

@@ -8,7 +8,6 @@ var Header = require('./components/common/header');
 //iife to wrap everything below so above are global variables but below is eval in strict mode:
 (function(win) {
     "use strict";
-
     //way to route without Router:
     var App = React.createClass({
         render: function(){
