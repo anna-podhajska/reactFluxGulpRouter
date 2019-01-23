@@ -10,7 +10,6 @@ var AuthorList = React.createClass({
     },
 
     render: function(){
-        console.log("AuthorList - render");
 
         //create a function to iterate through authors passed in props
         var createAuthorRow = function(author) {
